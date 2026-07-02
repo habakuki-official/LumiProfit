@@ -1,4 +1,4 @@
-body{
+ubody{
     margin:0;
     padding:0;
     background:#f5f5f5;
@@ -35,4 +35,18 @@ button{
 
 button:hover{
     background:#008c45;
+}
+select,
+input{
+    width:90%;
+    max-width:350px;
+    padding:12px;
+    margin-top:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+#submitBtn{
+    margin-top:20px;
 }
