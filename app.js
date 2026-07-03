@@ -114,6 +114,9 @@ if (usersList) {
         const snapshot = await getDocs(collection(db, "users"));
 
         snapshot.forEach((doc) => {
+          <button onclick="approveUser('${doc.id}')">
+Approve
+</button>
 
             const user = doc.data();
 
@@ -144,3 +147,19 @@ if (usersList) {
     loadUsers();
 
 }
+import {
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+window.approveUser = async function(id){
+
+    await updateDoc(doc(db,"users",id),{
+
+        status:"Approved"
+
+    });
+
+    alert("User Approved!");
+
+    location.reload();
+
+  }
