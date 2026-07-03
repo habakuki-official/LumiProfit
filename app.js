@@ -5,9 +5,13 @@ createUserWithEmailAndPassword,
 signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-import {
+imporimport {
 doc,
-setDoc
+setDoc,
+updateDoc,
+getDoc,
+collection,
+getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
