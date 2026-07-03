@@ -1,23 +1,92 @@
-function goToRegister(){
-    window.location.href = "register.html";
+import { auth, db } from "./firebase.js";
+
+import {
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+doc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+// ==========================
+// CREATE ACCOUNT
+// ==========================
+
+const registerBtn = document.getElementById("registerBtn");
+
+if(registerBtn){
+
+registerBtn.addEventListener("click", async ()=>{
+
+const fullName=document.getElementById("fullName").value;
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+if(fullName==="" || email==="" || password===""){
+alert("Please fill all fields.");
+return;
 }
 
-function goToLogin(){
-    window.location.href = "login.html";
+try{
+
+const userCredential=
+await createUserWithEmailAndPassword(auth,email,password);
+
+const user=userCredential.user;
+
+await setDoc(doc(db,"users",user.uid),{
+
+fullName:fullName,
+email:email,
+status:"Pending",
+balance:0
+
+});
+
+alert("Account created successfully!");
+
+window.location.href="login.html";
+
+}catch(error){
+
+alert(error.message);
+
 }
-function adminLogin(){
 
-let username=document.getElementById("username").value;
-let password=document.getElementById("password").value;
-
-if(username==="admin" && password==="123456"){
-
-window.location.href="admin-dashboard.html";
-
-}else{
-
-alert("Username cyangwa Password siyo.");
+});
 
 }
+
+
+
+// ==========================
+// LOGIN
+// ==========================
+
+const loginBtn=document.getElementById("loginBtn");
+
+if(loginBtn){
+
+loginBtn.addEventListener("click",async()=>{
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+try{
+
+await signInWithEmailAndPassword(auth,email,password);
+
+window.location.href="verify.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+});
 
 }
