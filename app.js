@@ -90,3 +90,53 @@ alert(error.message);
 });
 
 }
+// ==========================
+// SHOW USERS IN ADMIN
+// ==========================
+
+import {
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const usersList = document.getElementById("usersList");
+
+if (usersList) {
+
+    async function loadUsers() {
+
+        usersList.innerHTML = "";
+
+        const snapshot = await getDocs(collection(db, "users"));
+
+        snapshot.forEach((doc) => {
+
+            const user = doc.data();
+
+            usersList.innerHTML += `
+                <div style="
+                border:1px solid #ccc;
+                padding:10px;
+                margin:10px;
+                border-radius:10px;
+                ">
+                    <h3>${user.fullName}</h3>
+
+                    <p>Email: ${user.email}</p>
+
+                    <p>Phone: ${user.country} ${user.phone}</p>
+
+                    <p>Status: ${user.status}</p>
+
+                    <button>Approve</button>
+
+                </div>
+            `;
+
+        });
+
+    }
+
+    loadUsers();
+
+}
