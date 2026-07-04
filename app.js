@@ -163,3 +163,36 @@ window.approveUser = async function(id){
     location.reload();
 
   }
+import { auth, db } from "./firebase.js";
+import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const submitVerification = document.getElementById("submitVerification");
+
+if (submitVerification) {
+
+    submitVerification.addEventListener("click", async () => {
+
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("Please login first.");
+            return;
+        }
+
+        const country = document.getElementById("country").value;
+        const phone = document.getElementById("phone").value;
+        const reference = document.getElementById("reference").value;
+
+        await updateDoc(doc(db, "users", user.uid), {
+            country: country,
+            phone: phone,
+            reference: reference,
+            status: "Pending"
+        });
+
+        alert("Verification submitted successfully!");
+
+        window.location.href = "admin.html";
+    });
+
+}
