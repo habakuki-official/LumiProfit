@@ -1,19 +1,14 @@
 import { auth, db } from "./firebase.js";
 
 import {
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-imporimport {
-doc,
-setDoc,
-updateDoc,
-getDoc,
-collection,
-getDocs
+import {
+  doc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
 
 // ==========================
 // CREATE ACCOUNT
@@ -21,178 +16,81 @@ getDocs
 
 const registerBtn = document.getElementById("registerBtn");
 
-if(registerBtn){
+if (registerBtn) {
 
-registerBtn.addEventListener("click", async ()=>{
+  registerBtn.addEventListener("click", async () => {
 
-const fullName=document.getElementById("fullName").value;
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-if(fullName==="" || email==="" || password===""){
-alert("Please fill all fields.");
-return;
+    if (!fullName || !email || !password) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    try {
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        fullName: fullName,
+        email: email,
+        status: "Pending",
+        balance: 0,
+        createdAt: new Date().toISOString()
+      });
+
+      alert("Account created successfully!");
+
+      window.location.href = "login.html";
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  });
+
 }
-
-try{
-
-const userCredential=
-await createUserWithEmailAndPassword(auth,email,password);
-
-const user=userCredential.user;
-
-await setDoc(doc(db,"users",user.uid),{
-
-fullName:fullName,
-email:email,
-status:"Pending",
-balance:0
-
-});
-
-alert("Account created successfully!");
-
-window.location.href="login.html";
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-});
-
-}
-
-
 
 // ==========================
 // LOGIN
 // ==========================
 
-const loginBtn=document.getElementById("loginBtn");
+const loginBtn = document.getElementById("loginBtn");
 
-if(loginBtn){
+if (loginBtn) {
 
-loginBtn.addEventListener("click",async()=>{
+  loginBtn.addEventListener("click", async () => {
 
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-try{
+    if (!email || !password) {
+      alert("Enter your email and password.");
+      return;
+    }
 
-await signInWithEmailAndPassword(auth,email,password);
+    try {
 
-window.location.href="verify.html";
+      await signInWithEmailAndPassword(auth, email, password);
 
-}catch(error){
+      window.location.href = "verify.html";
 
-alert(error.message);
+    } catch (error) {
 
-}
-
-});
-
-}
-// ==========================
-// SHOW USERS IN ADMIN
-// ==========================
-
-import {
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const usersList = document.getElementById("usersList");
-
-if (usersList) {
-
-    async function loadUsers() {
-
-        usersList.innerHTML = "";
-
-        const snapshot = await getDocs(collection(db, "users"));
-
-        snapshot.forEach((doc) => {
-          <button onclick="approveUser('${doc.id}')">
-Approve
-</button>
-
-            const user = doc.data();
-
-            usersList.innerHTML += `
-                <div style="
-                border:1px solid #ccc;
-                padding:10px;
-                margin:10px;
-                border-radius:10px;
-                ">
-                    <h3>${user.fullName}</h3>
-
-                    <p>Email: ${user.email}</p>
-
-                    <p>Phone: ${user.country} ${user.phone}</p>
-
-                    <p>Status: ${user.status}</p>
-
-                    <button>Approve</button>
-
-                </div>
-            `;
-
-        });
+      alert(error.message);
 
     }
 
-    loadUsers();
-
-}
-import {
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-window.approveUser = async function(id){
-
-    await updateDoc(doc(db,"users",id),{
-
-        status:"Approved"
-
-    });
-
-    alert("User Approved!");
-
-    location.reload();
-
-  }
-import { auth, db } from "./firebase.js";
-import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-const submitVerification = document.getElementById("submitVerification");
-
-if (submitVerification) {
-
-    submitVerification.addEventListener("click", async () => {
-
-        const user = auth.currentUser;
-
-        if (!user) {
-            alert("Please login first.");
-            return;
-        }
-
-        const country = document.getElementById("country").value;
-        const phone = document.getElementById("phone").value;
-        const reference = document.getElementById("reference").value;
-
-        await updateDoc(doc(db, "users", user.uid), {
-            country: country,
-            phone: phone,
-            reference: reference,
-            status: "Pending"
-        });
-
-        alert("Verification submitted successfully!");
-
-        window.location.href = "admin.html";
-    });
+  });
 
 }
