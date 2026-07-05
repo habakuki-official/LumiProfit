@@ -1,15 +1,15 @@
-alert("APP.JS LOADED");
 import { auth, db } from "./firebase.js";
 
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   doc,
   setDoc
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
 // ==========================
 // CREATE ACCOUNT
@@ -18,49 +18,40 @@ import {
 const registerBtn = document.getElementById("registerBtn");
 
 if (registerBtn) {
-
   registerBtn.addEventListener("click", async () => {
 
-    const fullName = document.getElementById("fullName").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const fullName = document.getElementById("fullName").value;
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
     if (!fullName || !email || !password) {
-      alert("Please fill all fields.");
+      alert("Fill all fields");
       return;
     }
 
     try {
 
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       const user = userCredential.user;
 
       await setDoc(doc(db, "users", user.uid), {
-        fullName: fullName,
-        email: email,
+        fullName,
+        email,
         status: "Pending",
-        balance: 0,
-        createdAt: new Date().toISOString()
+        balance: 0
       });
 
       alert("Account created successfully!");
-
       window.location.href = "login.html";
 
     } catch (error) {
-
       alert(error.message);
-
     }
 
   });
-
 }
+
 
 // ==========================
 // LOGIN
@@ -69,16 +60,10 @@ if (registerBtn) {
 const loginBtn = document.getElementById("loginBtn");
 
 if (loginBtn) {
-
   loginBtn.addEventListener("click", async () => {
 
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
-    if (!email || !password) {
-      alert("Enter your email and password.");
-      return;
-    }
 
     try {
 
@@ -87,11 +72,8 @@ if (loginBtn) {
       window.location.href = "verify.html";
 
     } catch (error) {
-
       alert(error.message);
-
     }
 
   });
-
-}
+        }
